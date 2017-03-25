@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>웹브라우저의 DB(SQLite3) 사용하기</title>
+<script type="text/javascript">
+	var db; //DB 객체를 담을 변수
+	window.onload=function(){
+		if(window.openDatabase == undefined){
+			alert("이 웹브라우저는 Database 를 지원하지 않습니다.");
+			return; //메소드 끝내기
+		}
+		//DB 객체 얻어오기
+		db = window.openDatabase("MyDB","1.0","test",1024*1024*1);
+		
+		//트랜젝션 시작하기
+		db.transaction(function(dbHelper){
+			dbHelper.executeSql("CREATE TABLE IF NOT EXISTS member3(num INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL,addr TEXT)");
+		});
+		
+	}
+	function showData(){
+		db.transaction(function(dbHelper){
+			//DB 에서 데이터 셀렉트 해오기
+			dbHelper.executeSql("SELECT * FROM member3 ",[], success ,fail );
+		});
+	}
+	//SELECT 가 실패일때 호출되도록 등록한 함수
+	function fail(){
+		log("실패!!");
+	}
+	
+	//SELECT 가 성공일때  호출되도록 등록한 함수
+	function success(dbHelper, rs){
+		for(var i=0 ; i < rs.rows.length ; i++){
+			//SELECT 된 로우의  i 번째 인덱스에 있는 값을 읽어온다.
+			var row = rs.rows.item(i);
+			//하나의 로우의 정보를 log 에 출력해보기
+			log("번호: "+row.num+" 이름: "+row.name+" 주소: "+row.addr);
+		}
+	}
+	//저장 버튼을 눌렀을때 
+	function save(){
+		var nameObj = document.getElementById("name");
+		var addrObj = document.getElementById("addr");
+		if( nameObj.value == "" || nameObj.value == null){
+			alert("이름을 입력하세요!");
+			return; //메소드 끝내기
+		}
+		//입력한 이름과 주소 값 읽어오기
+		var inputName=nameObj.value;
+		var inputAddr=addrObj.value;
+		log(inputName+" / "+inputAddr);
+		//DB 에 저장하기
+		db.transaction(function(dbHelper){
+			dbHelper.executeSql
+			("INSERT INTO member3 VALUES(null, ?, ?)",[inputName, inputAddr]);
+		});
+	}
+	
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML += msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<div>
+	이름<input type="text" id="name"/>
+	주소<input type="text" id="addr"/>
+	<button onclick="save()">저장</button>
+</div>
+<button onclick="showData()">DB 에 저장된 내용 읽어오기</button>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" 
+	content="width=device-width, initial-scale=1.0, user-scalble=no"/>
+
+<title>나침반 만들기</title>
+<script type="text/javascript">
+	//이미지 객체 생성하기.
+	var compassImg=new Image();
+	//생성한 객체에 이미지 로딩하기.
+	compassImg.src="images/compass.png";
+	
+	var heading=0; //Heading 초기값
+	var context;
+	//윈도우가 로딩 완료 되었을때 호출되는 함수
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		context=canvas.getContext("2d");
+		
+		window.ondeviceorientation = changeOri;
+		//화면을 주기적으로 갱신되도록 함수를 호출한다.
+		//setInterval(drawCanvas, 10);
+	}
+	//나침반 그리는 함수
+	function drawCanvas(){
+		context.save();
+		context.translate(150, 150);
+		context.rotate( -heading );
+		context.drawImage( compassImg, -150, -150, 300, 300);
+		context.restore();
+		
+	}
+	
+	//방향센서(Orientation Sensor)가 바뀌었을 때 호출되게 등록한 함수
+	function changeOri(event){
+		
+		//헤딩 
+		heading = parseInt(event.alpha)*Math.PI/180;;
+		//피치
+		var pitch = parseInt(event.beta);
+		//롤링
+		var rolling = parseInt(event.gamma);
+		//로그 출력해보기
+		log("헤딩:"+heading+"<br/> 피치:"+pitch+"<br/> 롤링:"+rolling);
+		drawCanvas();
+		
+	}
+	
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML = msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="300" height="300"></canvas>
+</div>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+
+
+

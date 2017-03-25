@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>현재 시간 출력해 보기</title>
+<script type="text/javascript">
+	window.onload=function(){
+		//반복적으로  showTime 함수를 호출되게 한다.
+		setInterval( showTime, 50);
+	}
+	//시간을 주기적으로 출력하는 함수
+	function showTime(){
+		//Date 객체 생성하기
+		var d=new Date();
+		var hour=d.getHours(); //현재 시간 
+		var min=d.getMinutes(); //분
+		var sec=d.getSeconds(); //초
+		//로그에 출력해보기
+		log(hour+" 시 "+min+" 분 "+sec+" 초 입니다.");
+	}
+	
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML = msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+

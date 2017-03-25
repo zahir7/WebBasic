@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>캔바스 테스트2</title>
+<script type="text/javascript">
+	//전역변수로 context 객체 선언
+	var ctx=null;
+	var backImage=null; //배경이미지를 담을 변수
+	var bubble;
+	var bubbleX=0,bubbleY=0 ; //풍선의 좌표를 담을 변수
+	
+	//화면 로딩이 끝났을때 호출되는 함수
+	window.onload=function(){
+		init(); //초기화 
+		var canvas=document.getElementById("myCanvas");
+		//화면에 그릴수 있는 context 객체 얻어오기
+		ctx=canvas.getContext("2d");
+		//임시로 화면 그리기
+		drawCanvas();
+	}
+	//초기화 하는 함수 만들기
+	function init(){
+		//이미지 객체 생성하고 로딩하기
+		backImage=new Image();
+		bubble=new Image();
+		backImage.src="images/background.jpg";
+		bubble.src="images/b0.png";
+	}
+	//화면 그리는 함수
+	function drawCanvas(){
+		//배경이미지를 캔바스에 그린다.
+		ctx.drawImage(backImage,0 ,0 ,800, 500);
+		//풍선을 임의의 위치에 그린다.
+		ctx.drawImage(bubble, bubbleX, bubbleY, 50, 50);
+	}
+	//왼쪽 버튼을 눌렀을때
+	function moveleft(){
+		//풍선의 좌표 감소 시키기
+		bubbleX -= 10;
+		//화면 다시 그리기 
+		drawCanvas();
+	}
+	//오른쪽 버튼을 눌렀을때
+	function moveright(){
+		//풍선의 좌표 증가 시키기
+		bubbleX += 10;
+		//화면 다시 그리기 
+		drawCanvas();
+	}
+	function moveup(){
+		bubbleY -= 10;
+		drawCanvas();
+	}
+	function movedown(){
+		bubbleY += 10;
+		drawCanvas();
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="500"></canvas>
+</div>
+<button onclick="moveleft()">왼쪽</button>
+<button onclick="moveright()">오른쪽</button>
+<button onclick="moveup()">위</button>
+<button onclick="movedown()">아래</button>
+<img />
+</body>
+</html>
+
+
+
+
+

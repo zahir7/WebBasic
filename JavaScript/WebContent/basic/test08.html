@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>배열1</title>
+<script type="text/javascript">
+	//현재 페이지가 로딩이 끝났을때 호출되는 메소드를 window 객체에 등록하기 
+	window.onload=function(){
+		//배열객체 생성하기
+		var names=new Array();
+		//생성한 객체에 값 대입하기
+		names[0]="김태호";
+		names[1]="이현진";
+		names[2]="김슬기";
+		names[3]="박수형";
+		//배열에 있는 내용 출력해보기
+		for(var i=0 ; i < names.length ; i++){
+			log( names[i] );
+		}
+	}
+	//콜솔창에 인자로 전달된 문자열을 출력하는 함수만들기.
+	function log(msg){
+		//객체의 참조값 얻어오기
+		var console=document.getElementById("debugConsole");
+		//인자로 전달된 값이 null 이 아니라면 콘솔창에 출력하기
+		if( msg != null){
+			console.innerHTML += msg + "<br/>";
+		}
+	}
+</script>
+</head>
+<body>
+
+[[ 콘솔창 입니다.]]
+<!-- 디버그 할수 있는 콘솔창 만들기. -->
+<div id="debugConsole" style=" border: 1px solid #f00; width: 500px; font-size: 30px">
+
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

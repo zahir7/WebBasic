@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no, initial-scale=1.0, width=device-width" />
+<title>캔바스 테스트2</title>
+<style type="text/css">
+	*{
+	  	margin : 0px;	
+	 }
+</style>
+<script type="text/javascript">
+	//전역변수로 context 객체 선언
+	var ctx=null;
+	var backImage=null; //배경이미지를 담을 변수
+	var rabbit1,rabbit2; //토끼 이미지
+	var rabbitX=0,rabbitY=0 ; //풍선의 좌표를 담을 변수
+	var count=0 ; //카운트를 세어서 일정 주기로 이미지를 바꾸기 위한 변수
+	var backSound,scream; //배경음악,효과음 담을 객체
+	var back1X,back2X; //배경화면 1,2의 x좌표
+	var snipeX=1000,snipeY=1000; //스나이프의 좌표
+	var snipe; // 스나이프의 이미지
+	var speedX,speedY; // 태호토끼의 속도 
+	var energy; //에너지 값
+	var holeImage;  //구멍의 이미지.
+	var holes=[];  // 연관배열을 저장할 배열
+	
+	//화면 로딩이 끝났을때 호출되는 함수
+	window.onload=function(){
+		init(); //초기화 
+		var canvas=document.getElementById("myCanvas");
+		//화면에 그릴수 있는 context 객체 얻어오기
+		ctx=canvas.getContext("2d");
+		//이벤트 함수 등록하기
+		document.body.onmousemove = moveSnipe ; 
+		document.body.onmousedown = checkRabbit ;
+		canvas.ontouchstart = checkRabbit2; //iphone 지원
+		
+		//주기적으로 특정 함수 호출하기
+		setInterval( drawCanvas , 50 ); // (함수명,호출주기)
+	}
+	function checkRabbit2(eventPhone){
+		
+		if(eventPhone.touches.length > 0){
+		
+			var touch=eventPhone.touches[0];
+			var eventX=touch.clientX;
+			var eventY=touch.clientY;
+			
+			//if 문에서 판별하기
+			if( eventX > rabbitX-50 && eventX < rabbitX+50 
+				&& eventY > rabbitY-50 && eventY < rabbitY+50){
+		
+				//토끼가 맞았다
+				//scream.currentTime=0; //iphone 계열에서는 안됨
+				scream.play(); //처음부터 소리를 낸다.
+				energy -= 10; //에너지 줄이기
+				//구멍의 정보를 갖는 연관배열을 만든후 배열에 저장한다.
+				var holePosition = { x:eventX, y:eventY};
+				//배열에 저장
+				holes.push(holePosition);
+			}else{
+				//토끼가 안맞았다.
+				
+			}
+		}
+		//뒤에 다른 이벤트를 받지 못하도록
+		eventPhone.preventDefault;
+	}
+	
+	
+	//토끼가 총알을 맞았는지 체크하는 함수
+	function checkRabbit(downEvent){
+		var target=downEvent.target.nodeName;
+		if(target != "CANVAS")return; //메소드를 끝내라
+		
+		var eventX = downEvent.clientX;
+		var eventY = downEvent.clientY;
+		//if 문에서 판별하기
+		if( eventX > rabbitX-50 && eventX < rabbitX+50 
+			&& eventY > rabbitY-50 && eventY < rabbitY+50){
+			//토끼가 맞았다
+			scream.currentTime=0; //초기화 한후
+			scream.play(); //처음부터 소리를 낸다.
+			energy -= 10; //에너지 줄이기
+			//구멍의 정보를 갖는 연관배열을 만든후 배열에 저장한다.
+			var holePosition = { x:eventX, y:eventY};
+			//배열에 저장
+			holes.push(holePosition);
+		}else{
+			//토끼가 안맞았다.
+			
+		}
+	}
+	
+	//스나이프 움직이는 함수
+	function moveSnipe(moveEvent){
+		//이벤트가 발생한곳의 좌표를 얻어온다.
+		var eventX = moveEvent.offsetX ;
+		var eventY = moveEvent.offsetY ;
+		//마우스가 가리키고 있는곳을 읽어온다.
+		var target = moveEvent.target.nodeName;  
+		if(target == "CANVAS"){ //대문자 임에 유의한다.
+			//현재 마우스의 좌표를  스나이퍼의 좌표에 반영한다.
+			snipeX = eventX;
+			snipeY = eventY;
+		}
+	}
+	
+	//초기화 하는 함수 만들기
+	function init(){
+		energy = 100; //기본 에너지 부여하기
+		speedX = 10;
+		speedY = 10;
+		//토끼의 임시 초기 좌표
+		rabbitX=200;
+		rabbitY=200;
+		//배경화면의 초기좌표 정하기
+		back1X = 0 ;
+		back2X = 800;
+		backSound = new Audio("sounds/mp3piano.mp3");
+		scream = new Audio("sounds/scream.wav");
+		//이미지 객체 생성하고 로딩하기
+		backImage=new Image();
+		rabbit1=new Image();
+		rabbit2=new Image();
+		snipe=new Image();
+		holeImage=new Image(); //구멍의 이미지
+		backImage.src="images/background.jpg";
+		rabbit1.src="images/kim1.png";
+		rabbit2.src="images/kim2.png";
+		snipe.src="images/snipe.png";
+		holeImage.src="images/hole.png";
+		
+	}
+	var state=1;
+	//화면 그리는 함수
+	function drawCanvas(){
+		count++; //카운트를 올린다
+		if( count%10 == 0){
+			state *= -1;
+		}
+		//배경이미지를 캔바스에 그린다.
+		ctx.drawImage( backImage, back1X, 0, 800, 500);
+		ctx.drawImage( backImage, back2X, 0, 800, 500);
+		//글자 출력하기
+		ctx.font="20pt sans-serif";
+		ctx.fillStyle="yellow";
+		ctx.fillText("Energy:"+energy, 10, 50);
+		
+		if( state == 1){
+			//토끼그리기
+			ctx.drawImage(rabbit1 , rabbitX - 50, rabbitY - 50, 100, 100);
+		}else if( state == -1){
+			ctx.drawImage(rabbit2 , rabbitX - 50, rabbitY - 50, 100, 100);
+		}
+		//총알 구멍이 있다면 그리기
+		for(var i=0 ; i < holes.length ; i++){
+			ctx.drawImage(holeImage, holes[i].x - 5 , holes[i].y - 5  , 10, 10);
+		}
+		
+		ctx.drawImage(snipe, snipeX-50, snipeY-50, 100, 100);
+		//배경화면 스크롤 처리하기
+		back1X -= 1;
+		back2X -= 1;
+		//경계값 처리
+		if(back1X <= -800){
+			back1X = 800;
+			back2X = 0;
+		}
+		if(back2X <= -800){
+			back2X = 800;
+			back1X = 0;
+		}
+		//김태호 토끼 움직이기
+		moveRabbit();
+	
+	}
+	//토끼 움직이는 함수 정의하기.
+	function moveRabbit(){
+		//X 축 방향 속도를 토끼의 좌표에 반영하기
+		rabbitX += speedX;
+		//Y 축 방향 속도를 토끼의 좌표에 반영하기
+		rabbitY += speedY;
+		for(var i=0 ; i < holes.length ; i++){
+			holes[i].x += speedX;
+			holes[i].y += speedY;
+		}
+		
+		//토끼가 집을 나가지 못하도록 처리
+		if( rabbitX < 50 || rabbitX > 750){
+			speedX *= -1 ; //-1 을 곱해서 부호를 반대로 만든다.
+			rabbitX += speedX;
+			for(var i=0 ; i < holes.length ; i++){
+				holes[i].x += speedX;
+			}
+		}
+		if( rabbitY < 50 || rabbitY > 450){
+			speedY *= -1 ; //-1 을 곱해서 부호를 반대로 만든다.
+			rabbitY += speedY;
+			for(var i=0 ; i < holes.length ; i++){
+				holes[i].y += speedY;
+			}
+		}
+	}
+	
+	//배경음악 제어하는 함수
+	function soundControl(con){
+		if(con=="play"){
+			backSound.play(); //음악재생
+		}else if(con=="stop"){
+			backSound.currentTime=0; //정지 및 초기화
+			backSound.pause();
+		}
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="500"></canvas>
+</div>
+<br/>
+<button onclick="soundControl('play')">재생</button>
+<button onclick="soundControl('stop')">정지</button>
+</body>
+</html>
+
+
+
+
+

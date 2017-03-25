@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>비동기로 문자열 다운로드</title>
+<script type="text/javascript" src="js/ajax.js"></script>
+<script type="text/javascript">
+	//내부 자바 스크립트
+	function down(){
+		//<input type="text"  => 요소의 참조값 얻어오기
+		var url = document.getElementById("inputText");
+		//입력한 text 값 읽어오기
+		var urlAddr = url.value;
+		if(urlAddr == null || urlAddr == ""){
+			alert("주소를 입력하세요!");
+			return; //메소드를 끝낸다.
+		}
+		//테스트 로그
+		log(urlAddr+"로 요청을 보냅니다.");
+		//httpRequest 객체 얻어오기
+		httpRequest = getXmlHttpReqeust();
+		//브라우저의 종류에 따라 다른 설정하기
+		if(isExplore){ //익스플로어 계열이라면
+			log("익스플로어 계열입니다.");
+			//콜백 메소드 등록하기
+			httpRequest.onreadystatechange = viewMessage ;
+		}else{ //표준 계열이라면
+			log("표준 브라우저 계열입니다.");
+			//콜백 메소드 등록하기
+			httpRequest.onload = viewMessage ; 
+		}
+		//사용자가 입력한 URL 로 요청 메세지 보내기
+		httpRequest.open("GET", urlAddr, null);
+		httpRequest.send(null);
+		log("요청을 보냈습니다.");
+	}
+	//비동기 요청을 했을때 응답이 오면 호출되는 콜백 메소드(함수) 정의하기
+	function viewMessage(){
+		//서버에서 응답이 왔을때 상태값이 바뀐다.
+		if(httpRequest.readyState == 4){
+			if(httpRequest.status == 200){ //요청이 성공이라면 이부분이 실행된다.
+				//읽어온 데이터를 변수에 담는다.
+				data = httpRequest.responseText;
+				//로그에 출력해보기
+				log(data);
+			}
+		}
+	}
+	//로그를 출력할수 있는 함수
+	function log(msg){
+		//id 값을 이용해서 div 요소의 참조값을 얻어온다.
+		var console = document.getElementById("debugConsole");
+		if( console != null){
+			//인자로 전달받은 내용을 div 요소에 포함 시키고 한줄 개행하기
+			console.innerHTML += msg + "<br/>";
+		}
+	}
+</script>
+</head>
+<body>
+다운받을 URL : <input type="text" size="30" id="inputText">
+<button onclick="down()">비동기 다운로드</button><br/>
+<!-- 디버깅 할수 있는 콘솔창 만들기. -->
+<div id="debugConsole" style="border: 1px solid #f00; width: 600px; font-size:20px">
+
+</div>	
+</body>
+</html>
+
+
+
+
+
+
+

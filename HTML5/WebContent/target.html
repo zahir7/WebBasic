@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>풍선 쏘기</title>
+<script type="text/javascript">
+	var canvasObject;
+	var context;
+	var holes=[]; //구멍객체를 담을 배열
+	var logoImage=new Image();
+	logoImage.src="images/background.jpg";
+	//총알 구멍과 스나이프 이미지 로딩
+	var holeImage=new Image();
+	 holeImage.src="images/hole.png";
+	var snipeImage=new Image();
+	snipeImage.src="images/snipe.png";
+	//풍선 이미지 6개 로딩
+	var bubbleImg0=new Image();
+	bubbleImg0.src="images/b0.png";
+	var bubbleImg1=new Image();
+	bubbleImg1.src="images/b1.png";
+	var bubbleImg2=new Image();
+	bubbleImg2.src="images/b2.png";
+	var bubbleImg3=new Image();
+	bubbleImg3.src="images/b3.png";
+	var bubbleImg4=new Image();
+	bubbleImg4.src="images/b4.png";
+	var bubbleImg5=new Image();
+	bubbleImg5.src="images/b5.png";
+	//풍선이미지 담을 배열;
+	var bubbles=[];
+	// 파편객체 담을 배열
+	var bubbleChip=[];
+	var bubbleImg=bubbleImg0;//초기 풍선 타겟 이미지
+	//효과음 로딩하기
+	var fireSound=new Audio("sounds/fire.wav");
+	var jangSound=new Audio("sounds/jang.wav");
+	//반동효과를 주기위해서
+	var banY=0; //y축반동
+	var isJanged=true;
+	//스나이프의 초기좌표
+	var snipeX=1000;
+	var snipeY=1000;
+	var targetX=0,targetY=0;//풍선의 목표좌표
+	var bubbleX=0,bubbleY=0;
+	var moveCount=0;
+	var deltaX=0,deltaY=0;
+	var stepX=0.0;stepY=0.0;
+	//윈도우 로딩이 끝났을때 호출되도록
+	window.onload=function(){
+		initImage();//풍선 이미지 읽어오기
+		//캔바스 객체 얻어오기
+		canvasObject=document.getElementById("myCanvas");
+		context=canvasObject.getContext("2d");
+		//마우스 이벤트 , 터치 이벤트 등록하기
+		document.body.onmousedown=makeHole;
+		document.body.onmousemove=moveSnipe;
+		//canvasObject.ontouchstart=makeHole2; //아이폰,아이패드 환경일때 ontouchmove,ontouchend
+		//화면 랜더링 메소드를 주기적으로 호출해서 화면이 갱신되도록한다.
+		setInterval(drawScreen , 50);
+	}
+	//이미지 초기화
+	function initImage(){
+		bubbles[0]=bubbleImg0;
+		bubbles[1]=bubbleImg1;
+		bubbles[2]=bubbleImg2;
+		bubbles[3]=bubbleImg3;
+		bubbles[4]=bubbleImg4;
+		bubbles[5]=bubbleImg5;
+	}
+	//새로운 풍선 만드는 함수
+	function makeNewBubble(){
+		var x=Math.round(Math.random()*890);
+		var y=Math.round(Math.random()*300);
+		var imgIndex=Math.floor(Math.random()*6);
+		bubbleX=x;
+		bubbleY=y;
+		bubbleImg=bubbles[imgIndex];
+		targetX=snipeX;
+		targetY=snipeY;
+		deltaX=targetX-bubbleX;
+		deltaY=targetY-bubbleY;
+		stepX=deltaX/100.0;
+		stepY=deltaY/100.0;
+		moveCount=0;
+	}
+	//풍선파편 만드는 함수
+	function makeBubbleChip(){
+		
+		var chipX=bubbleX;
+		var chipY=bubbleY;
+		//파편 10개 만들기
+		for(var i=0 ; i<1000 ; i++){
+			var chip={};
+			var speedX=Math.round(Math.random()*20-10);
+			var speedY=Math.round(Math.random()*20-10);
+			var imgIndex=Math.floor(Math.random()*6);
+			
+			//파편 풍선 연관 배열을 만든후 배열에 담는다.
+			chip.x=chipX;
+			chip.y=chipY;
+			chip.speedX=speedX;
+			chip.speedY=speedY;
+			chip.isDead=false;
+			chip.img=bubbles[imgIndex];
+			bubbleChip[i]=chip;
+		}
+		//풍선 새로 만들기 
+		makeNewBubble();
+	}
+	//칩 움직이기
+	function moveChip(){
+		//if(bubbleChip.length<=0)return;
+		for(var i=bubbleChip.length-1 ; i >= 0 ; i --){ //배열의 뒤에서 부터 검사
+			bubbleChip[i].x += bubbleChip[i].speedX;
+			bubbleChip[i].y += bubbleChip[i].speedY;
+		}
+	}
+	
+	//풍선 이 맞았는지 검사하기
+	function checkBubble(hole){
+		
+		if(hole.x > bubbleX-25 && hole.x < bubbleX+25 && hole.y > bubbleY-25 && hole.y < bubbleY+25){
+			makeBubbleChip();
+		}
+	}
+	//타겟의 위치로 천천히 움직이게 하는 함수
+	function moveToTarget(){
+	
+		log("targetX:"+targetX+" targetY:"+targetY+"<br/>"+
+				"snipeX:"+snipeX+" snipeY:"+snipeY+"<br/>"+
+				"bubbleX:"+bubbleX+" bubbleY:"+bubbleY+"<br/>"+
+				"moveCount:"+moveCount);
+		
+		if(moveCount==100)return; // 100번 움직였으면 더이상 움직이지 않도록
+		//100 등분으로 쪼갠 만큼 움직인다.
+		bubbleX += stepX;
+		bubbleY += stepY;
+		//몇번 움직였는지 카운트를 센다.
+		moveCount++;
+	}
+	
+	
+	//스나이프 움직이는 함수
+	function moveSnipe(e){
+		//이벤트가 일어난곳의 좌표를 얻어온다.
+		var eventX=e.offsetX;
+		var eventY=e.offsetY;
+		
+		var target=e.target.nodeName;
+		if( target == "CANVAS"){ //대문자임을 유의한다.
+			//이벤트가 읽어난곳으로 스나이프를 이동시킨다.
+			snipeX=eventX;
+			snipeY=eventY;
+			
+			//풍선을 타겟으로 움직이게 하기위한 처리
+			
+			//풍선의 최종 목적지.
+			targetX=eventX;  
+			targetY=eventY;
+			
+			//최종 목적지와 현재 풍선사이의 x축방향 거리
+			deltaX=targetX-bubbleX;
+			//최종 목적지와 현재 풍선사이의 y축방향 거리
+			deltaY=targetY-bubbleY;
+			
+			//각각의 거리를 100 등분
+			stepX=deltaX/100.0;
+			stepY=deltaY/100.0;
+			
+			//100등분한 거리를 몇번 움직였는지 표시할 변수
+			moveCount=0;
+			
+		}
+	}
+	/*
+	//아이폰,아이패드 지원
+	function makeHole2(e){
+		
+		
+		if(e.touches.length > 0){ //터치의 갯수가 한개 이상일때
+			var eventX=e.touches[0].pageX;
+			var eventY=e.touches[0].pageY;
+			snipeX=eventX;
+			snipeY=eventY;
+			log(eventX+"/"+eventY);
+			var target=e.target.nodeName;
+			if( target == "CANVAS"){ //대문자임을 유의한다.
+				//소리 초기화
+				
+				//소리내기
+				fireSound.play();
+				var hole={};
+				hole.x=eventX;
+				hole.y=eventY;
+				//생성한 구멍객체 배열에 담기
+				holes.push(hole);
+				//반동주기
+				banY =50;
+				isJanged=false;
+				//풍선이 맞았는지 검사하기
+				checkBubble(hole);
+			}
+		}
+		e.preventDefault(); //빠른 동작을 위해
+	}
+	*/
+	//총알 구멍만들기
+	function makeHole(e){
+		var eventX=e.offsetX;
+		var eventY=e.offsetY;
+		var target=e.target.nodeName;
+		if( target == "CANVAS" && isJanged ){ //대문자임을 유의한다.
+			//소리 초기화
+			fireSound.currentTime=0;
+			//소리내기
+			fireSound.play();
+			var hole={};
+			hole.x=eventX;
+			hole.y=eventY;
+			//생성한 구멍객체 배열에 담기
+			holes.push(hole);
+			//반동주기
+			banY =50;
+			isJanged=false;
+			//풍선이 맞았는지 검사하기
+			checkBubble(hole);
+		}
+		e.preventDefault();
+	}
+	//장전소리내기
+	function makeJang(){
+		//소리 초기화
+		jangSound.currentTime=0;
+		//소리내기
+		jangSound.play();
+	}
+	function drawScreen(){
+		//로고 그리기
+		context.drawImage(logoImage, 0, 0, 890, 300);
+		//배열에 저장된 총알 그리기
+		for( index in holes){
+			context.drawImage(holeImage, holes[index].x-10, holes[index].y-10,20,20);
+		}
+		context.drawImage(bubbleImg, bubbleX-25, bubbleY-25, 50, 50);
+		//반복문 돌면서 풍선 파편 그리기
+		for(var i=0 ; i < bubbleChip.length ; i++){
+			context.drawImage(bubbleChip[i].img, 
+					bubbleChip[i].x-5, bubbleChip[i].y-5, 10, 10);
+		}
+		//풍선 파편 움직이기
+		moveChip();
+		//스나이프 그리기
+		context.drawImage(snipeImage, snipeX-50, snipeY-50-banY, 100, 100);
+		
+		//풍선을 최종 목적지 까지 움직인다.
+		moveToTarget();
+		
+		//반동 줄이기
+		if(banY >  0){
+			banY -=5;
+			if(banY<=0){
+				banY=0;
+				makeJang();
+				isJanged=true;
+			}
+		}
+		
+	}
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML = msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<div style="margin: auto;">
+	<canvas id="myCanvas" width="890" height="300"></canvas>
+</div>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

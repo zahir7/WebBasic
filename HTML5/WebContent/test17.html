@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>컨텍스트의 알파값 변경하기</title>
+<script type="text/javascript">
+	var context;
+	//화면에 출력할 배경이미지
+	var backImg=new Image();
+	backImg.src="images/background.jpg";
+	
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		context = canvas.getContext("2d");
+		//drawCanvas 함수가 주기적으로 호출되도록해서 화면을 갱신한다.
+		setInterval(drawCanvas, 50);
+	}
+	var count=0; //함수가 호출되는 수를 셀 카운트
+	var plusOrMinus=1;
+	//화면 그리는 함수
+	function drawCanvas(){
+		context.fillStyle="white";
+		//캔바스 전체를 흰색 사각형으로 색칠한다.
+		context.fillRect(0, 0, 800, 300);
+		context.save(); //현재 상태 저장
+		//알파값 조정하기
+		context.globalAlpha=1.0 - 0.01*count;
+		//배경화면 그리기
+		context.drawImage(backImg, 0, 0, 800, 300);
+		context.restore(); //원래 상태로 되돌리기
+		count += plusOrMinus;
+		if( count == 100){
+			plusOrMinus = -1;
+		}
+		if( count == 0){
+			plusOrMinus = 1;
+		}
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="300"></canvas>
+</div>
+</body>
+</html>
+
+
+
+
+
+

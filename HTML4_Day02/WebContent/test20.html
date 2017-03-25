@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>내부 스타일의 적용(Internal Style Sheet)</title>
+<style type="text/css">
+	/* 스타일 시트에는 선택자라는 개념이 있다. */
+	p{ 							/* p 라는 요소를 선택 */
+		color: blue ; 			/* 글자 색을 지정 */
+		background: silver ; 	/*배경색을 지정*/
+	}
+	h1{
+		color: green;
+		background: yellow;
+	}
+	
+</style>
+
+</head>
+<body>
+	<h1>내부 스타일 적용하기</h1>
+	<p>CSS 를 이용하여 단락의 배경 색상과 기본 글자 색을 변경합니다.</p>
+	<p>내부 스타일을 적용할때는 style 요소를 기본으로 사용하고 type 속성의 
+	값으로 "text/css" 값을 지정합니다.</p>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>위치 정보 이용하기</title>
+<script type="text/javascript">
+	var watchId; //감시 아이디
+	
+	window.onload=function(){
+		//위치 정보를 확인할수 있는 브라우져 인지 확인한다.
+		if(navigator.geolocation == undefined ){
+			alert("위치 정보 기능을 지원하지 않습니다.");
+			return;
+		}
+	}
+	//현재 위치 정보가 계속 갱신될수 있도록
+	function watch(){
+		//현재 위치 정보를 조사하고 성공,실패 했을때 호출되는 함수를 등록한다.
+		watchId=navigator.geolocation.watchPosition( success, fail);
+	}
+	//갱신 취소하기
+	function clearWatch(){
+		navigator.geolocation.clearWatch(watchId);
+	}
+	
+	//성공했다면
+	function success( position ){
+		log("위치정보 확인 성공!");
+		var lat=position.coords.latitude;
+		var lon=position.coords.longitude;
+		var uri="http://maps.google.co.kr/?q="+lat+","+lon;
+		log("현재 위도:"+lat);
+		log("현재 경도:"+lon);
+		log("<a href='"+uri+"'>현재위치 보기</a>");
+	}
+	//실패라면
+	function fail( err ){
+		log("위치 정보 확인 실패!")
+	}
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML += msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<button onclick="watch()">위치정보 항상 갱신하기</button>
+<button onclick="clearWatch()">갱신취소</button>	
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

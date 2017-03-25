@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>아날로그 시계</title>
+<script type="text/javascript">
+	
+	var context;//캔바스에 그림을 그리기 위한 객체
+	//시계 이미지 객체 생성하기.
+	var dialImg=new Image();
+	var hourImg=new Image();
+	var minImg=new Image();
+	var secImg=new Image();
+	//이미지 로딩하기
+	dialImg.src="images/dial.png";
+	hourImg.src="images/pin_3.png";
+	minImg.src="images/pin_2.png";
+	secImg.src="images/pin_1.png";
+	//시침, 분침, 초침이 돌아간각도
+	var rHour=0.0,rMin=0.0,rSec=0.0;
+	var centerX, centerY ; //화면의 정중앙의 좌표
+	
+	//페이지 로딩이 끝났을때 호출되는 함수
+	window.onload=function(){
+		//켄바스 객체으 참조값 얻어오기
+		var canvas=document.getElementById("myCanvas");
+		context=canvas.getContext("2d");
+		//캔바스 정중앙의 좌표
+		centerX = 300/2; //캔바스 폭의 반
+		centerY = 300/2; //캔바스 높이의 반
+		
+		//반복적으로  showTime 함수를 호출되게 한다.
+		setInterval( showTime, 50);
+	}
+	//캔바스에 그림을 그리는 함수 정의하기
+	function drawCanvas(){
+		//시계 다이얼 그리기
+		context.drawImage( dialImg, centerX-150, centerY-150, 300, 300);
+		context.save(); //현재 캔바스 상태를 저장한다음
+		context.translate(centerX, centerY);
+		//초침이 돌아간 만큼 켄바스 회전시키기
+		context.rotate( rSec );
+		//초침 그리기
+		context.drawImage( secImg, -10, -130+10, 20, 130);
+		context.restore(); //저장했던 상태로 원상 복구한다. 
+		
+		//분침 그리기 전에 현재 상태 저장하기
+		context.save();
+		//평행이동
+		context.translate(centerX, centerY);
+		//분침이 돌아가야 할 각만큼 회전
+		context.rotate(rMin);
+		//분침 그리기
+		context.drawImage( minImg, -10, -130+10, 20, 130);
+		//원래 상태로 복구
+		context.restore();
+		
+		//시침 그리기 전에 현재 상태 저장하기
+		context.save();
+		//평행이동
+		context.translate(centerX, centerY);
+		//분침이 돌아가야 할 각만큼 회전
+		context.rotate(rHour);
+		//분침 그리기
+		context.drawImage( hourImg, -10, -130+10, 20, 130);
+		//원래 상태로 복구
+		context.restore();
+		
+		
+	}
+	
+	//시간을 주기적으로 출력하는 함수
+	function showTime(){
+		//Date 객체 생성하기
+		var d=new Date();
+		var hour=d.getHours(); //현재 시간 
+		var min=d.getMinutes(); //분
+		var sec=d.getSeconds(); //초
+		//초침이 돌아간 각도를360분법의 각도로 얻어오기
+		rSec = 6*sec;                    //360분법의 각도
+		rMin = 6*min + 6*(rSec/360);	 //360분법의 각도
+		rHour = 30*hour + 30*(rMin/360); //360분법의 각도
+		//각을 rad 단위로 환산해서 변수에 대입한다.
+		rSec = rSec*(Math.PI/180);
+		rMin = rMin*(Math.PI/180);
+		rHour = rHour*(Math.PI/180);
+		
+		//화면 그리는 함수 호출하기
+		drawCanvas();
+		
+		//로그에 출력해보기
+		log(hour+" 시 "+min+" 분 "+sec+" 초 입니다.");
+	}
+	
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML = msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="300" height="300"></canvas>
+</div>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

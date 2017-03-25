@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>Day01_MVC</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+  <servlet>
+  <!-- 서블릿 이름일 정하기 -->
+  	<servlet-name>mvc</servlet-name>
+  <!-- 서블릿 클래스가 있는 곳을 명시 -->
+  	<servlet-class>mvc.controller.Controller</servlet-class>  	
+  </servlet>
+  
+  <!-- 서블릿 맵핑 -->
+  <servlet-mapping>
+  	<servlet-name>mvc</servlet-name>
+  	<url-pattern>*.do</url-pattern>	
+  </servlet-mapping>
+</web-app>

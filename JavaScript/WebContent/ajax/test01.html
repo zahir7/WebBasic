@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>Ajax</title>
+<script type="text/javascript">
+	function getXmlHttpRequest(){
+		//explore 브라우저 지원하기 위해
+		if(window.ActiveXObject){
+			try{
+				
+				return new ActiveXObject("Msxml2.XMLHTTP");
+			}catch(e){
+				try{
+					
+					return new ActiveXObject("Microsoft.XMLHTTP");
+				}catch(e2){
+					return null;
+				}
+			}
+		//표준 브라우저 지원
+		}else if(window.XMLHttpRequest){
+			
+			//비동기 통신을 위한 XMLHttpRequest 객체 리턴하기.
+			return new XMLHttpRequest();
+		}else{
+			return null;
+		}
+	}
+	//전역 변수 선언
+	var httpRequest=null;	
+	
+	window.onload=function(){
+		//XMLHttpRequest 객체 얻어오기
+		httpRequest=getXmlHttpRequest();
+		//상태값이 바뀌었을때 호출될 메소드 등록하기
+		httpRequest.onReadyStateChange = viewMessage;
+		//비동기 요청하기 위한 셋팅하기
+		httpRequest.open("GET","http://192.168.0.112:8888/Rss_Server/rss.xml", null);
+		//요청 메세지 보내기
+		httpRequest.send(null);
+	}
+	function viewMessage(){
+		
+		if(httpRequest.readyState==4){
+			
+			if(httpRequest.status==200){
+				log("aaa");
+				//서버가 응답한 문서를 얻어오기.
+				data=httpRequest.responseText;
+				//콘솔창에 출력하기
+				log(data);
+			}
+		}
+	}
+	//콜솔창에 인자로 전달된 문자열을 출력하는 함수만들기.
+	function log(msg){
+		//객체의 참조값 얻어오기
+		var console=document.getElementById("debugConsole");
+		//인자로 전달된 값이 null 이 아니라면 콘솔창에 출력하기
+		if( msg != null){
+			console.innerHTML += msg + "<br/>";
+		}
+	}
+</script>
+</head>
+<body>
+
+[[ 콘솔창 입니다.]]
+<!-- 디버그 할수 있는 콘솔창 만들기. -->
+<div id="debugConsole" style=" border: 1px solid #f00; width: 500px; font-size: 30px"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

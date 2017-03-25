@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>캔바스 테스트2</title>
+<script type="text/javascript">
+	//전역변수로 context 객체 선언
+	var ctx=null;
+	var backImage=null; //배경이미지를 담을 변수
+	var bubble;
+	//화면 로딩이 끝났을때 호출되는 함수
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		//화면에 그릴수 있는 context 객체 얻어오기
+		ctx=canvas.getContext("2d");
+		//이미지 객체 생성하기
+		backImage = new Image();
+		bubble = new Image();
+		//생성한 객체에 이미지 파일 지정하기
+		backImage.src = "images/background.jpg";
+		bubble.src = "images/b0.png";
+		//이미지 로딩이 끝났을때 실행할 함수 지정하기.
+		backImage.onload = function(){
+			//배경이미지를 캔바스에 그린다.
+			ctx.drawImage(backImage,0 ,0 ,800, 500);
+			//풍선을 임의의 위치에 그린다.
+			ctx.drawImage(bubble, 200, 200);
+		}	
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="500"></canvas>
+</div>
+<img />
+</body>
+</html>
+
+
+
+
+

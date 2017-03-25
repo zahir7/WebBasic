@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>캔바스 테스트2</title>
+<script type="text/javascript">
+//전역변수로 context 객체 선언
+var ctx=null;
+	//화면 로딩이 끝났을때 호출되는 함수
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		//화면에 그릴수 있는 context 객체 얻어오기
+		ctx=canvas.getContext("2d");
+		//화면에 사각형 그리기
+		ctx.fillStyle="yellow";
+		ctx.fillRect(0, 100, 300, 300); //좌상단의 좌표 와 폭과 높이 지정해서 그리기
+		//화면에 원을 그리기위해
+		ctx.beginPath();
+		var startAngle = 0 ;
+		var endAngle = 270*Math.PI/180;
+		//원호의 중심의 좌표와, 반지름, 시작각도, 끝나는 각도 (각 : rad 단위)
+		ctx.arc(450, 200, 100, startAngle, endAngle, false);
+		ctx.strokeStyle = "#00ff00"; //녹색
+		ctx.lineWidth = 5; //선 굵기 지정
+		ctx.stroke(); //그리기
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="500"></canvas>
+</div>
+</body>
+</html>
+
+
+
+
+

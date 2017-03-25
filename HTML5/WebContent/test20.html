@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- 외부 자바 스크립트 포함 시키기(ArrayList 의 생성자 함수를 사용하기 위해)-->
+<script type="text/javascript" src="js/guraUtil.js"></script>
+<script type="text/javascript">
+	var context ;
+	//배경화면의 y 좌표
+	var back1Y = 0,back2Y = -600;
+	//배경이미지
+	var backImg=new Image();
+	backImg.src="images/space.jpg";
+	//비행기의 이미지
+	var ship=new Image();
+	ship.src="images/gunship5.png";
+	//비행기의 좌표
+	var shipX=200, shipY=500; //초기 좌표
+	//미사일 이미지
+	var missile=new Image();
+	missile.src="images/missile1.png";
+	//미사일의 y 방향 속도
+	var speedMissile= -10;
+	//미사일 객체를 담을 ArrayList
+	var missList=new ArrayList();
+	
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		context = canvas.getContext("2d");
+		//마우스 이벤트 등록 하기
+		document.body.onmousedown = checkPosition
+		
+		//화면 렌더링 하는 함수 호출하기.
+		setInterval(drawCanvas, 50); // 50/1000 초마다 화면을 다시 렌더링한다.
+	}
+	//마우스를 클릭한 영역을 판별하는 함수.
+	function checkPosition(e){
+		//클릭이 일어난곳의 nodeName 을 얻어온다.
+		var target = e.target.nodeName;
+		if( target != "CANVAS")return; //캔바스 영역이 아니라면 메소드 종료
+		//클릭한 곳의 좌표 얻어오기
+		var eventX = e.offsetX;
+		var eventY = e.offsetY;
+		//클릭한곳의 좌표를 확인해서 안움직일지 왼쪽으로 움직일지 오른쪽으로 움직일지 판별!
+		if( eventX > 0 && eventX < 100 && eventY > 500 && eventY < 600){
+			//왼쪽으로 움직이기
+			shipX -=10;
+		}
+		if( eventX > 100 && eventX < 200 && eventY > 500 && eventY < 600){
+			//오른쪽으로 움직이기
+			shipX +=10;
+		}
+		if( eventX > 300 && eventX < 400 && eventY > 500 && eventY < 600){
+			//미사일 객체(연관배열) 만들기
+			var m = { x : shipX, y : shipY };
+			//만든 객체를 저장한다.
+			missList.add(m);
+		}
+	}
+	
+	//화면 렌더링하는 함수
+	function drawCanvas(){
+		//배경화면 그리기
+		context.drawImage( backImg, 0, back1Y, 400, 600 );
+		context.drawImage( backImg, 0, back2Y, 400, 600 );
+		//왼쪽 조이스틱 영역 그리기
+		context.strokeStyle="yellow";
+		context.strokeRect(0, 500, 100, 100);
+		context.strokeRect(100, 500, 100, 100);
+		//미사일이 있다면 그리기
+		for(var i=0 ; i < missList.size() ; i++){
+			context.drawImage(missile, 
+					missList.get(i).x,
+					missList.get(i).y,
+					5,10);
+		}
+		//비행기 그리기
+		context.drawImage( ship, shipX-25, shipY-25, 50, 50);
+		
+		//배경화면 스크롤 관련 처리
+		back1Y += 5;
+		back2Y += 5;
+		if(back1Y == 600){
+			back1Y = -600;
+			back2Y = 0 ;
+		}
+		if(back2Y == 600){
+			back2Y = -600;
+			back1Y = 0 ;
+		}
+		moveMissile(); //미사일관련 처리하는 함수 호출
+	}
+	//미사일 관련처리 하는 함수
+	function moveMissile(){
+		for(var i=0 ; i < missList.size() ; i++){
+			//미사일의 속도를 y 좌표에 반영한다.
+			missList.get(i).y += speedMissile;
+		}
+		for(var i = missList.size()-1 ; i >= 0 ; i--){
+			if(missList.get(i).y < 0){
+				//배열에서 제거한다.
+				missList.remove(i);
+			}
+		}
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="400" height="600"></canvas>
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

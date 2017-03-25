@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>자바(Java) 클래스 흉내내기</title>
+<script type="text/javascript" src="js/guraUtil.js"></script>
+<script type="text/javascript">
+
+	//회원정보를 가지고 있는 Member 만들기
+	Member = function Member(num, name, addr){
+		this.num = num ;
+		this.name = name ;
+		this.addr = addr ;
+		this.showData = function(){
+			var data="번호:"+this.num+" 이름:"+this.name+" 주소:"+this.addr;
+			return data;
+		}
+	}
+	window.onload=function(){
+		var myList=new ArrayList();
+		myList.add("김태호");
+		myList.add("나야나");
+		myList.add("강소라");
+		myList.add("이효리");
+		
+		//리스트에 저장된 모든 내용 출력해보기
+		for(var i=0 ; i < myList.size() ; i++){
+			log("이름:"+myList.get(i));
+		}
+		log("---------------");
+		//배열에서 특정 인덱스 삭제 하기
+		myList.remove(2);
+		log("삭제후 size:"+myList.size());
+		//리스트에 저장된 모든 내용 출력해보기
+		for(var i=0 ; i < myList.size() ; i++){
+			log("이름:"+myList.get(i));
+		}
+		
+	}
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML += msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>

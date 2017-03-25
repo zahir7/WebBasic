@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>컨텍스트의 알파값 변경하기</title>
+<script type="text/javascript">
+	var context;
+	//화면에 출력할 배경이미지
+	var backImg=new Image();
+	backImg.src="images/background.jpg";
+	
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		context = canvas.getContext("2d");
+		drawCanvas();//화면 그리기
+	}
+	//화면 그리는 함수
+	function drawCanvas(){
+		context.font="40pt serif";
+		context.fillStyle="red";
+		context.fillText("배경화면 뒤에 있는 글자 입니다.", 10, 50);
+		
+		//알파값 조정하기
+		context.globalAlpha=0.5;
+		//배경화면 그리기
+		context.drawImage(backImg, 0, 0, 800, 300);
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="300"></canvas>
+</div>
+</body>
+</html>
+
+
+
+
+
+

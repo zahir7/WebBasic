@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>컨텍스트의 알파값 변경하기</title>
+<script type="text/javascript" src="js/guraUtil.js"></script>
+<script type="text/javascript">
+	var context;
+	//화면에 출력할 배경이미지
+	var bubbleImg=new Image();
+	bubbleImg.src="images/b0.png";
+	
+	//화면로딩이 끝났을때 호출되는 함수
+	window.onload=function(){
+		var canvas=document.getElementById("myCanvas");
+		context = canvas.getContext("2d");
+		//풍선 객체 만들어서 ArrayList 객체에 담기
+		makeBubble();
+		//만들어진 풍선을 화면에 렌더링 해보기
+		drawCanvas();
+	}
+	
+	//화면 그리는 함수
+	function drawCanvas(){
+		//반복문 돌면서 화면에 풍선 렌더링하기
+		for(var i=0 ; i < bubbleList.size() ; i++){
+			//알파값을 반영하기 위해서
+			context.save(); //현재 컨텍스트 상태를 저장한다.
+			//i번째 풍선의 알파값을 컨텍스트에 반영한다.
+			context.globalAlpha = bubbleList.get(i).alpha;
+			context.drawImage(bubbleImg,  //풍선 이미지
+						bubbleList.get(i).x, //풍선의 x좌표
+						bubbleList.get(i).y, //풍선의 y좌표
+						bubbleList.get(i).size, //풍선의 폭
+						bubbleList.get(i).size )//풍선의 높이
+			//다음 풍선을 위해서 컨텍스트의 상태를 되돌린다.
+			context.restore();
+		}
+	}
+	
+	
+	var bubbleList;
+	//풍선 10개를 랜덤으로 만들어서  ArrayList 에 저장하는 함수.
+	function makeBubble(){
+		bubbleList=new ArrayList();
+		//반복문 돌면서 연관배열객체 10개를 만들어서 ArrayList 에 저장하기
+		for(var i=0 ; i < 10 ; i++){
+			var x1 = Math.round(Math.random()*800); //0~800 사이의 랜덤한 수
+			var y1 = Math.round(Math.random()*300); //0~300 사이의 랜덤한 수
+			var alpha1 = Math.random(); //0~1 사이의 랜덤한수 발생
+			var size1 = Math.round(Math.random()*50)+50; //50~100 사이의 난수  
+			//랜덤으로 생성한 정보에 해당하는 연관배열을 만든다.
+			var bubble = { x : x1 , y : y1 , alpha : alpha1 , size : size1};
+			//만든 객체를 ArrayList 에 저장한다.
+			bubbleList.add(bubble);
+		}
+		
+		//저장된 내용 출력해보기
+		for(var i=0 ; i < bubbleList.size() ; i++ ){
+			log(bubbleList.get(i).x+" / "
+			+ bubbleList.get(i).y+" / "
+			+ bubbleList.get(i).alpha+" / "
+			+ bubbleList.get(i).size);
+		}
+	}
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML += msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<div>
+	<canvas id="myCanvas" width="800" height="300"></canvas>
+</div>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>자바 스크립트</title>
+<script type="text/javascript">
+	//전역변수 선언하고 값 대입하기. (전역변수는 앞에 var 을 선언한다.)
+	var count=0;
+	//함수에 해당된다.
+	function showAlert(){
+		count++; //카운트 증가 시키기
+		alert("버튼을 "+count+" 번  눌렀네?");
+	}
+	
+</script>
+</head>
+<body>
+<button onclick="showAlert()">눌러보세요!</button>
+</body>
+</html>

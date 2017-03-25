@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>자바(Java) 클래스 흉내내기</title>
+<script type="text/javascript">
+	//생성자 함수를 이용해서 ArrayList 만들기
+	ArrayList = function ArrayList(){
+		
+	}
+	//회원정보를 가지고 있는 Member 만들기
+	Member = function Member(num, name, addr){
+		this.num = num ;
+		this.name = name ;
+		this.addr = addr ;
+		this.showData = function(){
+			var data="번호:"+this.num+" 이름:"+this.name+" 주소:"+this.addr;
+			return data;
+		}
+	}
+	window.onload=function(){
+		//Member 객체 생성하기
+		var mem1=new Member(1, "김태호", "노량진");
+		var mem2=new Member(2, "홍길동", "서울");
+		// 객체의 함수를 호출해서 리턴되는 데이타를 출력하기
+		log(mem1.showData());
+		log(mem2.showData());
+	}
+	//인자로 전달되는 값을 콘솔창에 출력하는 함수
+	function log(msg){
+		var console=document.getElementById("console");
+		console.innerHTML += msg +"<br/>";
+	}
+</script>
+</head>
+<body>
+<!-- 테스트 로그을 출력하기 위해 -->
+<div id="console" style="width:500px ; border:2px solid red; font-size: 20px"></div>
+</body>
+</html>
